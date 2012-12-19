@@ -11,6 +11,8 @@
 	<script src="http://d3js.org/d3.v2.min.js?2.9.6"></script>
 	
 	<script type="text/javascript" charset="utf-8">
+		// Reference for data
+		// https://docs.google.com/spreadsheet/ccc?key=0At5DmgJ01T78dFV5bXZ3d3diX0ZmYnVEV1hadDhoRlE#gid=0
 		$(document).ready(function() {
 			var SETTINGS = {
 				bin_or_break: 'break',
@@ -25,19 +27,14 @@
 				data: null
 			}
 
-			var ds = new Miso.Dataset({
-			  importer : Miso.Importers.GoogleSpreadsheet,
-			  parser : Miso.Parsers.GoogleSpreadsheet,
-			  key : CONFIG.table_id,
-			  worksheet : "1"
-			});
+	
 
 			var xAxis = [];
 			var constructHistData = function(){
 				xAxis =[];
 				var dataBuckets = [];
-			    var numbers = CONFIG.miso_obj.column("numbers").data;
-				var dataMax = CONFIG.miso_obj.max("numbers");
+			    var numbers = CONFIG.miso_obj.column("data").data;
+				var dataMax = CONFIG.miso_obj.max("data");
 				if (SETTINGS.bin_or_break == 'break'){
 					var bins = dataMax/SETTINGS.bin_break_number;
 				}else{
@@ -145,28 +142,41 @@
 				
 			}
 
-			ds.fetch({ 
-			  success : function() {
-			  	CONFIG.miso_obj = this;
-			  	constructHistData();
-			  	drawHighChart();
-				// Begin Highcharts
+			var fetchNewData = function(){
+				var ds = new Miso.Dataset({
+				  importer : Miso.Importers.GoogleSpreadsheet,
+				  parser : Miso.Parsers.GoogleSpreadsheet,
+				  key : CONFIG.table_id,
+				  worksheet : "1"
+				});
+							
+				ds.fetch({ 
+				  success : function() {
+				  	console.log(this)
+				  	CONFIG.miso_obj = this;
+				  	constructHistData();
+				  	drawHighChart();
+					// Begin Highcharts
+					
+				  },
+				  error : function() {
+				  }
+				});
 				
-			  },
-			  error : function() {
-			  }
-			});
+			}
 
+			fetchNewData();
 			$('#break-controls input').change(function(){
 				SETTINGS.bin_or_break = $(this).val();
 			});
 			$('#bins-breaks').change(function(){
 				SETTINGS.bin_break_number = $(this).val();
 			});
+			$('#table-id').change(function(){
+				CONFIG.table_id = $(this).val();
+			});
 			$('#submit-btn').click(function(){
-			  	constructHistData();
-			  	drawHighChart();
-
+				fetchNewData();
 			});
 
 		});
@@ -186,6 +196,9 @@
 			<div class="radio-option"><input type="radio" value="log" name="group2" /> Log</div>
 			<div class="radio-option"><input type="radio" value="ln" name="group2" /> ln()</div>
 			<div class="radio-option"><input type="radio" value="square" name="group2" /> &#8730;</div>
+		</div>
+		<div id="controls-table-key" class="control-block">
+			<input id="table-id" type="text" placeholder="Spreadsheet key" />
 		</div>
 		<input id="submit-btn" type="submit" value="New Histogram!"/>
 	</div>
