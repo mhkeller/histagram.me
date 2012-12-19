@@ -2,6 +2,7 @@
 <h3>An interactive histogram maker using highcharts and D3</h3>
 <article>
 	<h4>Live app: <a href="http://mhkeller.github.com/histogrammer" target="_blank">http://mhkeller.github.com/histogrammer</a></h4>
+	<h4>Sample Spreadsheet: <a href="https://docs.google.com/spreadsheet/ccc?key=0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE#gid=0" target="_blank">https://docs.google.com/spreadsheet/ccc?key=0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE#gid=0</a></h4>
 	<br/>
 	<h4>How to:</h4>
 	<ol>
