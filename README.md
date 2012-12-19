@@ -7,7 +7,7 @@
 	<h4>How to:</h4>
 	<ol>
 		<li>Name your value column in your spreadsheet to "data"</li>
-		<li>Go to File > Pubish to the Web</li>
+		<li>Go to File > Publish to the Web</li>
 		<li>Copy the key i.e. 0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE</li>
 		<li>Paste that into the textfield and hit the button</li>
 	</ol>
