@@ -3,6 +3,7 @@
 <article>
 	<h4>Live app: <a href="http://mhkeller.github.com/histogrammer" target="_blank">http://mhkeller.github.com/histogrammer</a></h4>
 	<br/>
+	<h4>How to:</h4>
 	<ol>
 		<li>Name your value column in your spreadsheet to "data"</li>
 		<li>Go to File > Pubish to the Web</li>
