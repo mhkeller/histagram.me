@@ -1,0 +1,30 @@
+#controls{
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
+	font-weight: 300;
+}
+.header{
+	font-weight:bold;
+	letter-spacing: 1px;
+
+}
+.radio-option{
+	font-size:12px;
+	letter-spacing: 1px;
+}
+.control-block{
+	float:left;
+	margin-right:20px;
+}
+.float-me{
+	float:left;
+}
+#controls-transformation .radio-option{
+	float:left;
+	width:100px;
+	margin-bottom:5px;
+}
+#controls-transformation{
+	width:200px;
+	margin:0 0 0 20px;
+}
+
