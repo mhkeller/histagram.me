@@ -1,6 +1,8 @@
 #controls{
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
 	font-weight: 300;
+	float:left;
+	width:590px;
 }
 .header{
 	font-weight:bold;
@@ -28,6 +30,16 @@
 	margin:0 0 0 20px;
 }
 h2, h4{
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
+	font-weight: 300;
+}
+#descriptive-stats{
+	float:left;
+}
+.stat{
+	/*width:110px;*/
+	margin-right:35px;
+	display:inline-block;
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
 	font-weight: 300;
 }

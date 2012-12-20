@@ -14,6 +14,13 @@
 		data: null
 	}
 
+	var VALUES = {
+		mean: null,
+		median: null,
+		mode: null,
+		range: null
+	}
+
 
 
 	var xAxis = [];
@@ -22,6 +29,7 @@
 		var dataBuckets = [];
 	    var numbers = CONFIG.miso_obj.column("data").data;
 		var dataMax = CONFIG.miso_obj.max("data");
+		var dataMin = CONFIG.miso_obj.min("data");
 		if (SETTINGS.bin_or_break == 'break'){
 			var bins = dataMax/SETTINGS.bin_break_number;
 		}else{
@@ -48,6 +56,45 @@
 		});
 		CONFIG.data = dataBuckets;
 
+		// Get Mean, median, mode, and range
+		// Mean
+		VALUES.mean = CONFIG.miso_obj.sum('data')/(numbers.length)
+		VALUES.median = median(numbers);
+		VALUES.mode = String(mode(numbers));
+		VALUES.range = dataMin + ' - ' + dataMax;
+	}
+
+	// http://caseyjustus.com/finding-the-median-of-an-array-with-javascript
+	function median(values) {
+ 
+	    values.sort( function(a,b) {return a - b;} );
+	 
+	    var half = Math.floor(values.length/2);
+	 
+	    if(values.length % 2)
+	        return values[half];
+	    else
+	        return (values[half-1] + values[half]) / 2.0;
+	}
+
+	// http://rosettacode.org/wiki/Averages/Mode#JavaScript
+	function mode(ary) {
+	    var counter = {};
+	    var mode = [];
+	    var max = 0;
+	    for (var i in ary) {
+	        if (!(ary[i] in counter))
+	            counter[ary[i]] = 0;
+	        counter[ary[i]]++;
+	 
+	        if (counter[ary[i]] == max) 
+	            mode.push(ary[i]);
+	        else if (counter[ary[i]] > max) {
+	            max = counter[ary[i]];
+	            mode = [ary[i]];
+	        }
+	    }
+	    return mode; 
 	}
 
 	var drawHighChart = function(){
@@ -129,6 +176,13 @@
 		
 	}
 
+	var drawDescriptStats = function(){
+		$('#mean span').html(Math.round(VALUES.mean*100)/100);
+		$('#median span').html(VALUES.median);
+		$('#mode span').html(VALUES.mode);
+		$('#range span').html(VALUES.range);
+	}
+
 	var fetchNewData = function(){
 		var ds = new Miso.Dataset({
 		  importer : Miso.Importers.GoogleSpreadsheet,
@@ -139,10 +193,10 @@
 
 		ds.fetch({ 
 		  success : function() {
-		  	console.log(this)
 		  	CONFIG.miso_obj = this;
 		  	constructHistData();
 		  	drawHighChart();
+		  	drawDescriptStats();
 			// Begin Highcharts
 			
 		  },
