@@ -30,8 +30,9 @@
 	    var numbers = CONFIG.miso_obj.column("data").data;
 		var dataMax = CONFIG.miso_obj.max("data");
 		var dataMin = CONFIG.miso_obj.min("data");
+		var dataRange = dataMax-dataMin;
 		if (SETTINGS.bin_or_break == 'break'){
-			var bins = dataMax/SETTINGS.bin_break_number;
+			var bins = dataRange/SETTINGS.bin_break_number;
 		}else{
 			var bins = Number(SETTINGS.bin_break_number);
 		}
