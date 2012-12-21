@@ -9,6 +9,7 @@
 
 	var CONFIG = {
 		table_id: '0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE',
+		column_name: 'data',
 		y_axis_label: 'Count',
 		miso_obj: null,
 		data: null
@@ -27,9 +28,9 @@
 	var constructHistData = function(){
 		xAxis =[];
 		var dataBuckets = [];
-	    var numbers = CONFIG.miso_obj.column("data").data;
-		var dataMax = CONFIG.miso_obj.max("data");
-		var dataMin = CONFIG.miso_obj.min("data");
+	    var numbers = CONFIG.miso_obj.column(CONFIG.column_name).data;
+		var dataMax = CONFIG.miso_obj.max(CONFIG.column_name);
+		var dataMin = CONFIG.miso_obj.min(CONFIG.column_name);
 		var dataRange = dataMax-dataMin;
 		if (SETTINGS.bin_or_break == 'break'){
 			var bins = dataRange/SETTINGS.bin_break_number;
@@ -41,6 +42,7 @@
 		var data = d3.layout.histogram()
 		    .bins(bins)
 		    (numbers);
+	    console.log(data[12])
 		$.each(data,function(index, value){
 			// Construct X Axis of ranges
 			var binMin = Math.round(value['x'])
@@ -50,7 +52,6 @@
 				var binMax = Math.round(value['x'] + value['dx'])
 			}
 			xAxis.push(String(binMin + "-" + binMax))
-			
 			// Construct data from lengths of bins
 			dataBuckets.push(value.length)
 			
@@ -59,7 +60,7 @@
 
 		// Get Mean, median, mode, and range
 		// Mean
-		VALUES.mean = CONFIG.miso_obj.sum('data')/(numbers.length)
+		VALUES.mean = CONFIG.miso_obj.sum(CONFIG.column_name)/(numbers.length)
 		VALUES.median = median(numbers);
 		VALUES.mode = String(mode(numbers));
 		VALUES.range = dataMin + ' - ' + dataMax;
@@ -207,7 +208,8 @@
 		
 	}
 
-	fetchNewData();
+	// fetchNewData();
+
 	$('#break-controls input').change(function(){
 		SETTINGS.bin_or_break = $(this).val();
 	});
@@ -216,6 +218,9 @@
 	});
 	$('#table-id').change(function(){
 		CONFIG.table_id = $(this).val();
+	});
+	$('#column-name').change(function(){
+		CONFIG.column_name = $(this).val();
 	});
 	$('#submit-btn').click(function(){
 		fetchNewData();

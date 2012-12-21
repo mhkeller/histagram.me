@@ -46,3 +46,9 @@ h2, h4{
 #chart-container{
 	float:left;
 }
+#break-controls{
+	line-height:22px;
+}
+#submit-btn{
+	width:126px;
+}

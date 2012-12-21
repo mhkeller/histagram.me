@@ -13,9 +13,13 @@
 </head>
 <body>
 	<h2>An interactive histogram maker</h2>
-	<h4>Put your data into a Google Spreadsheet and name your values column "data". Publish it to the web, paste the key and get a distribution. <a href="http://github.com/mhkeller/histogrammer" target="_blank">More info.</a></h4>
+	<h4>Put your data into a Google Spreadsheet, publish it to the web, paste the key, the column with your data, and get a distribution. <a href="http://github.com/mhkeller/histogrammer" target="_blank">More info.</a></h4>
 
 	<div id="controls">
+		<div id="controls-table-key" class="control-block">
+			<input id="table-id" type="text" placeholder="Spreadsheet key" /><br/>
+			<input id="column-name" type="text" placeholder="Column name" />
+		</div>
 		<div id="break-controls" class="control-block">
 			<div class="radio-option"><input type="radio" value="break" name="group1" checked/> Break distance</div>
 			<div class="radio-option"><input type="radio" value="bin" name="group1"/> Bin number</div>
@@ -29,10 +33,9 @@
 			<div class="radio-option"><input type="radio" value="ln" name="group2" /> ln()</div>
 			<div class="radio-option"><input type="radio" value="square" name="group2" /> &#8730;</div>
 		</div>
-		<div id="controls-table-key" class="control-block">
-			<input id="table-id" type="text" placeholder="Spreadsheet key" />
+		<div>
+			<input id="submit-btn" type="submit" value="New Histogram!"/>
 		</div>
-		<input id="submit-btn" type="submit" value="New Histogram!"/>
 	</div>
 	<div id="descriptive-stats">
 		<span id="mean" class="stat"><strong>Mean</strong>: <span>&#8212;</span></span>
