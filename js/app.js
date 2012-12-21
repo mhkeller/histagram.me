@@ -208,11 +208,13 @@
 	}
 
 	$(window).bind( 'hashchange', function(e) {
-		var state = $.bbq.getState()
-		CONFIG.table_id = state.key;
-		CONFIG.column_name = state.col;
-		SETTINGS.bin_or_break = state.bob;
-		SETTINGS.bin_break_number = state.bbn;
+		if (window.location.hash != ''){
+			var state = $.bbq.getState()
+			CONFIG.table_id = state.key;
+			CONFIG.column_name = state.col;
+			SETTINGS.bin_or_break = state.bob;
+			SETTINGS.bin_break_number = state.bbn;
+		};
 		fetchNewData();
 	});
 
