@@ -42,7 +42,6 @@
 		var data = d3.layout.histogram()
 		    .bins(bins)
 		    (numbers);
-	    console.log(data[12])
 		$.each(data,function(index, value){
 			// Construct X Axis of ranges
 			var binMin = Math.round(value['x'])
@@ -208,7 +207,14 @@
 		
 	}
 
-	fetchNewData();
+	$(window).bind( 'hashchange', function(e) {
+		var state = $.bbq.getState()
+		CONFIG.table_id = state.key;
+		CONFIG.column_name = state.col;
+		SETTINGS.bin_or_break = state.bob;
+		SETTINGS.bin_break_number = state.bbn;
+		fetchNewData();
+	});
 
 	$('#break-controls input').change(function(){
 		SETTINGS.bin_or_break = $(this).val();
@@ -223,6 +229,15 @@
 		CONFIG.column_name = $(this).val();
 	});
 	$('#submit-btn').click(function(){
-		fetchNewData();
+		var key = {
+			l: CONFIG.table_id
+		}
+		$.bbq.pushState({ 
+			'key': CONFIG.table_id,
+			'col': CONFIG.column_name, 
+			'bob': SETTINGS.bin_or_break,
+			'bbn': SETTINGS.bin_break_number
+		});
 	});
+	$(window).trigger( 'hashchange' );
 })();
