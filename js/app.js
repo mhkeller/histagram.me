@@ -208,7 +208,7 @@
 		
 	}
 
-	// fetchNewData();
+	fetchNewData();
 
 	$('#break-controls input').change(function(){
 		SETTINGS.bin_or_break = $(this).val();
