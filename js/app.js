@@ -140,7 +140,7 @@
 			  },
 		      tooltip: {
 		        formatter: function() {
-		          return 'Count in group: ' + this.y + "<br/>Range:" + this.x;
+		          return 'Count in group: ' + this.y + "<br/>Range: " + this.x;
 		        },
 				borderRadius: 1,
 				borderWidth: 1,
