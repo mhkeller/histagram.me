@@ -7,10 +7,9 @@
 	<h4>How to:</h4>
 	<ol>
 		<li>Put your data into a Google Spreadsheet</li>
-		<li>Name your value column in your spreadsheet to "data"</li>
 		<li>Go to File > Publish to the Web</li>
 		<li>Copy the key i.e. 0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE</li>
-		<li>Paste that into the textfield and hit the button</li>
+		<li>Paste that into the textfield, enter the column name and hit the button</li>
 	</ol>
 	<p>You have the option of setting a specific number of bins or specific break intervals.</p>
 	<p><strong>Contact:</strong> <a href="http://www.twitter.com/mhkeller" target="_blank">@mhkeller</a></p>
