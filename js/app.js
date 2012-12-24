@@ -108,7 +108,7 @@
 		        marginBottom: 50
 		      },
 		      title: {
-		        text: histagram_name,
+		        text: CONFIG.histagram_name,
 		        x: 0,
 		 		style: {
 					color: '#303030',
