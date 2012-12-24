@@ -10,7 +10,7 @@
 	var CONFIG = {
 		table_id: '0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE',
 		column_name: 'data',
-		histagram_name: 'Histagram'
+		histagram_name: 'Histagram',
 		y_axis_label: 'Count',
 		miso_obj: null,
 		data: null
