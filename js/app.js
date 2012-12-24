@@ -172,7 +172,7 @@
 		      series: [{
 		          name: CONFIG.y_axis_label,
 		          data: CONFIG.data,
-				  color:'#ee364d'
+				  color:'#6c0'
 		      }]
 		    });
 
