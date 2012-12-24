@@ -29,9 +29,10 @@
 	width:200px;
 	margin:0 0 0 20px;
 }
-h2, h4{
+h4{
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
 	font-weight: 300;
+	margin:10px;
 }
 #descriptive-stats{
 	float:left;

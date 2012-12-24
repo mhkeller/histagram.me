@@ -10,6 +10,7 @@
 	var CONFIG = {
 		table_id: '0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE',
 		column_name: 'data',
+		histagram_name: 'Histagram'
 		y_axis_label: 'Count',
 		miso_obj: null,
 		data: null
@@ -53,7 +54,7 @@
 			xAxis.push(String(binMin + "-" + binMax))
 			// Construct data from lengths of bins
 			dataBuckets.push(value.length)
-			
+
 		});
 		CONFIG.data = dataBuckets;
 
@@ -67,11 +68,11 @@
 
 	// http://caseyjustus.com/finding-the-median-of-an-array-with-javascript
 	function median(values) {
- 
+
 	    values.sort( function(a,b) {return a - b;} );
-	 
+
 	    var half = Math.floor(values.length/2);
-	 
+
 	    if(values.length % 2)
 	        return values[half];
 	    else
@@ -87,15 +88,15 @@
 	        if (!(ary[i] in counter))
 	            counter[ary[i]] = 0;
 	        counter[ary[i]]++;
-	 
-	        if (counter[ary[i]] == max) 
+
+	        if (counter[ary[i]] == max)
 	            mode.push(ary[i]);
 	        else if (counter[ary[i]] > max) {
 	            max = counter[ary[i]];
 	            mode = [ary[i]];
 	        }
 	    }
-	    return mode; 
+	    return mode;
 	}
 
 	var drawHighChart = function(){
@@ -107,7 +108,7 @@
 		        marginBottom: 50
 		      },
 		      title: {
-		        text: 'Histogram',
+		        text: histagram_name,
 		        x: 0,
 		 		style: {
 					color: '#303030',
@@ -126,7 +127,7 @@
 							color: '#303030',
 							font: 'normal 13px "Arial", sans-serif'
 						}
-			        
+
 				}
 		      },
 		      yAxis: {
@@ -171,10 +172,10 @@
 		      series: [{
 		          name: CONFIG.y_axis_label,
 		          data: CONFIG.data,
-				  color:'#6c0'
+				  color:'#ee364d'
 		      }]
 		    });
-		
+
 	}
 
 	var drawDescriptStats = function(){
@@ -192,19 +193,19 @@
 		  worksheet : "1"
 		});
 
-		ds.fetch({ 
+		ds.fetch({
 		  success : function() {
 		  	CONFIG.miso_obj = this;
 		  	constructHistData();
 		  	drawHighChart();
 		  	drawDescriptStats();
 			// Begin Highcharts
-			
+
 		  },
 		  error : function() {
 		  }
 		});
-		
+
 	}
 
 	$(window).bind( 'hashchange', function(e) {
@@ -230,13 +231,16 @@
 	$('#column-name').change(function(){
 		CONFIG.column_name = $(this).val();
 	});
+	$('#histagram-name').change(function(){
+		CONFIG.histagram_name = $(this).val();
+	});
 	$('#submit-btn').click(function(){
 		var key = {
 			l: CONFIG.table_id
 		}
-		$.bbq.pushState({ 
+		$.bbq.pushState({
 			'key': CONFIG.table_id,
-			'col': CONFIG.column_name, 
+			'col': CONFIG.column_name,
 			'bob': SETTINGS.bin_or_break,
 			'bbn': SETTINGS.bin_break_number
 		});
