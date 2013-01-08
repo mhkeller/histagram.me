@@ -1,7 +1,7 @@
 <h1>Histogrammer</h1>
 <h3>An interactive histogram maker using Google Spreadsheets, Highcharts.js, and D3.js</h3>
 <article>
-	<h4>Live app: <a href="http://mhkeller.github.com/histogrammer" target="_blank">http://mhkeller.github.com/histogrammer</a></h4>
+	<h4>Live app: <a href="http://www.histagram.me" target="_blank">http://histagram.me</a></h4>
 	<h4>Sample Spreadsheet: <a href="https://docs.google.com/spreadsheet/ccc?key=0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE#gid=0" target="_blank">https://docs.google.com/spreadsheet/ccc?key=0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE#gid=0</a></h4>
 	<br/>
 	<h4>How to:</h4>
@@ -12,5 +12,6 @@
 		<li>Paste that into the textfield, enter the column name and hit the button</li>
 	</ol>
 	<p>You have the option of setting a specific number of bins or specific break intervals.</p>
+	<p>Logo + hosting by <a href="http://github.com/abelsonlive" target="_blank">Brian Abelson</a></p>
 	<p><strong>Contact:</strong> <a href="http://www.twitter.com/mhkeller" target="_blank">@mhkeller</a></p>
 </article>
