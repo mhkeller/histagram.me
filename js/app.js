@@ -190,7 +190,8 @@
 		  importer : Miso.Importers.GoogleSpreadsheet,
 		  parser : Miso.Parsers.GoogleSpreadsheet,
 		  key : CONFIG.table_id,
-		  worksheet : "1"
+		  worksheet : "1",
+		  fast: true
 		});
 
 		ds.fetch({
