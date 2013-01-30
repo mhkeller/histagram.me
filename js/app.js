@@ -2,8 +2,8 @@
 	// Reference for data
 	// https://docs.google.com/spreadsheet/ccc?key=0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE#gid=0
 	var SETTINGS = {
-		bin_or_break: 'break',
-		bin_break_number: 5,
+		bin_or_break: 'bin',
+		bin_break_number: 15,
 		transform_function: 'raw'
 	}
 
@@ -57,6 +57,8 @@
 
 		});
 		CONFIG.data = dataBuckets;
+
+		console.log(CONFIG.data)
 
 		// Get Mean, median, mode, and range
 		// Mean
@@ -197,9 +199,11 @@
 		ds.fetch({
 		  success : function() {
 		  	CONFIG.miso_obj = this;
+		  	console.log(this)
 		  	constructHistData();
 		  	drawHighChart();
-		  	drawDescriptStats();
+		  	console.log('there')
+		  	// drawDescriptStats();
 			// Begin Highcharts
 
 		  },
