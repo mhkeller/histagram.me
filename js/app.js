@@ -58,7 +58,6 @@
 		});
 		CONFIG.data = dataBuckets;
 
-		console.log(CONFIG.data)
 
 		// Get Mean, median, mode, and range
 		// Mean
