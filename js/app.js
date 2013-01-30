@@ -199,11 +199,9 @@
 		ds.fetch({
 		  success : function() {
 		  	CONFIG.miso_obj = this;
-		  	console.log(this)
 		  	constructHistData();
 		  	drawHighChart();
-		  	console.log('there')
-		  	// drawDescriptStats();
+		  	drawDescriptStats();
 			// Begin Highcharts
 
 		  },
