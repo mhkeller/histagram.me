@@ -12,76 +12,60 @@
 		column_name: 'data',
 		histagram_name: 'Histagram',
 		y_axis_label: 'Count',
-		miso_obj: null,
-		data: null
-	}
+	};
 
-	var VALUES = {
-		mean: null,
-		median: null,
-		mode: null,
-		range: null
-	}
-
+	function constructHistDataDrawChart(data){
+		var hist_data = constructHistData(data);
+		drawHighChart(hist_data);
+	};
 
 
 	var xAxis = [];
-	var constructHistData = function(){
-		xAxis =[];
-		var dataBuckets = [];
-	    var numbers = CONFIG.miso_obj.column(CONFIG.column_name).data;
-		var dataMax = CONFIG.miso_obj.max(CONFIG.column_name);
-		var dataMin = CONFIG.miso_obj.min(CONFIG.column_name);
-		var dataRange = dataMax-dataMin;
+	function constructHistData(data){
+		var data_buckets = [],
+				max = d3.max(data),
+				min = d3.min(data),
+				range = max - min,
+				bins; 
+
 		if (SETTINGS.bin_or_break == 'break'){
-			var bins = dataRange/SETTINGS.bin_break_number;
+			bins = range / SETTINGS.bin_break_number;
 		}else{
-			var bins = Number(SETTINGS.bin_break_number);
-		}
+			bins = Number(SETTINGS.bin_break_number);
+		};
 
 		// Generate a histogram using n uniformly-spaced bins.
-		var data = d3.layout.histogram()
+		var binned_data = d3.layout.histogram()
 		    .bins(bins)
-		    (numbers);
-		$.each(data,function(index, value){
+		    (data);
+
+		$.each(binned_data, function(index, value){
 			// Construct X Axis of ranges
-			var binMin = Math.round(value['x'])
-			if ( Math.round(value['x'] + value['dx']) != dataMax){
-				var binMax = Math.round(value['x'] + value['dx'] - 1)
+			var bin_min = Math.round(value['x'])
+			if ( Math.round(value['x'] + value['dx']) != max){
+				var bin_max = Math.round(value['x'] + value['dx'] - 1)
 			}else{
-				var binMax = Math.round(value['x'] + value['dx'])
-			}
-			xAxis.push(String(binMin + "-" + binMax))
+				var bin_max = Math.round(value['x'] + value['dx'])
+			};
+
+			xAxis.push(String(bin_min + "-" + bin_max))
+
 			// Construct data from lengths of bins
-			dataBuckets.push(value.length)
+			data_buckets.push(value.length)
 
 		});
-		CONFIG.data = dataBuckets;
 
+		var hist_data = {
+			buckets: data_buckets, 
+			x_axis: xAxis
+		};
 
-		// Get Mean, median, mode, and range
-		// Mean
-		VALUES.mean = CONFIG.miso_obj.sum(CONFIG.column_name)/(numbers.length)
-		VALUES.median = median(numbers);
-		VALUES.mode = String(mode(numbers));
-		VALUES.range = dataMin + ' - ' + dataMax;
-	}
+		return hist_data;
 
-	// http://caseyjustus.com/finding-the-median-of-an-array-with-javascript
-	function median(values) {
-
-	    values.sort( function(a,b) {return a - b;} );
-
-	    var half = Math.floor(values.length/2);
-
-	    if(values.length % 2)
-	        return values[half];
-	    else
-	        return (values[half-1] + values[half]) / 2.0;
-	}
+	};
 
 	// http://rosettacode.org/wiki/Averages/Mode#JavaScript
-	function mode(ary) {
+	function calcMode(ary) {
 	    var counter = {};
 	    var mode = [];
 	    var max = 0;
@@ -100,7 +84,7 @@
 	    return mode;
 	}
 
-	var drawHighChart = function(){
+	function drawHighChart(hist_data){
 		chart = new Highcharts.Chart({
 		      chart: {
 		        renderTo: 'chart-container',
@@ -121,7 +105,7 @@
 		        x: -20
 		      },
 		      xAxis: {
-		        categories: xAxis,
+		        categories: hist_data.x_axis,
 				title:{
 					text: '',
 					style: {
@@ -172,24 +156,30 @@
 		      },
 		      series: [{
 		          name: CONFIG.y_axis_label,
-		          data: CONFIG.data,
+		          data: hist_data.buckets,
 				  color:'#6c0'
 		      }]
 		    });
 
 	}
 
-	var drawDescriptStats = function(){
-		$('#mean span').html(Math.round(VALUES.mean*100)/100);
-		$('#median span').html(VALUES.median);
-		$('#mode span').html(VALUES.mode);
-		$('#range span').html(VALUES.range);
-	}
+	function drawDescriptStats(data){
+
+		var mean = ss.mean(data),
+				median = ss.median(data),
+				mode = String(calcMode(data)),
+				range = d3.min(data) + '-' + d3.max(data);
+
+		$('#mean span').html(Math.round(mean * 100) / 100);
+		$('#median span').html(median);
+		$('#mode span').html(mode);
+		$('#range span').html(range);
+	};
 
 	var fetchNewData = function(){
 		var ds = new Miso.Dataset({
-		  importer : Miso.Importers.GoogleSpreadsheet,
-		  parser : Miso.Parsers.GoogleSpreadsheet,
+		  importer : Miso.Dataset.Importers.GoogleSpreadsheet,
+		  parser : Miso.Dataset.Parsers.GoogleSpreadsheet,
 		  key : CONFIG.table_id,
 		  worksheet : "1"//,
 		  //fast: true
@@ -197,11 +187,9 @@
 
 		ds.fetch({
 		  success : function() {
-		  	CONFIG.miso_obj = this;
-		  	constructHistData();
-		  	drawHighChart();
-		  	drawDescriptStats();
-			// Begin Highcharts
+		  	var data = this.column(CONFIG.column_name).data;
+		  	constructHistDataDrawChart(data);
+		  	drawDescriptStats(data);
 
 		  },
 		  error : function() {
