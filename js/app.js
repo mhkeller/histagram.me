@@ -3,9 +3,8 @@
 	// https://docs.google.com/spreadsheet/ccc?key=0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE#gid=0
 	var SETTINGS = {
 		bin_or_break: 'bin',
-		bin_break_number: 15,
-		transform_function: 'raw'
-	}
+		bin_break_number: 15
+	};
 
 	var CONFIG = {
 		table_id: '0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE',
@@ -19,13 +18,13 @@
 		drawHighChart(hist_data);
 	};
 
-
-	var xAxis = [];
 	function constructHistData(data){
 		var data_buckets = [],
 				max = d3.max(data),
 				min = d3.min(data),
 				range = max - min,
+				data_buckets = [],
+				xAxis = [],
 				bins; 
 
 		if (SETTINGS.bin_or_break == 'break'){
@@ -82,10 +81,10 @@
 	        }
 	    }
 	    return mode;
-	}
+	};
 
 	function drawHighChart(hist_data){
-		chart = new Highcharts.Chart({
+		var chart = new Highcharts.Chart({
 		      chart: {
 		        renderTo: 'chart-container',
 		        type: 'column',
@@ -95,10 +94,10 @@
 		      title: {
 		        text: CONFIG.histagram_name,
 		        x: 0,
-		 		style: {
-					color: '#303030',
-					font: 'normal 16px "Arial", sans-serif'
-				}//center
+				 		style: {
+							color: '#303030',
+							font: 'normal 16px "Arial", sans-serif'
+						}//center
 		      },
 		      subtitle: {
 		        text: '',
@@ -106,65 +105,62 @@
 		      },
 		      xAxis: {
 		        categories: hist_data.x_axis,
-				title:{
-					text: '',
-					style: {
-							color: '#303030',
-							font: 'normal 13px "Arial", sans-serif'
+					title:{
+						text: '',
+						style: {
+								color: '#303030',
+								font: 'normal 13px "Arial", sans-serif'
+							}
 						}
-
-				}
 		      },
 		      yAxis: {
 		        title: {
 		          text: 'Count',
-				  style: {
-						color: '#303030',
-						font: 'normal 13px "Arial", sans-serif'
-					}
+						  style: {
+								color: '#303030',
+								font: 'normal 13px "Arial", sans-serif'
+							}
 		        }
-			  },
+				  },
 		      tooltip: {
 		        formatter: function() {
 		          return 'Count in group: ' + this.y + "<br/>Range: " + this.x;
 		        },
-				borderRadius: 1,
-				borderWidth: 1,
-				shadow: false
+						borderRadius: 1,
+						borderWidth: 1,
+						shadow: false
 		      },
-			  plotOptions: {
-				series: {
-					shadow: false,
-					borderWidth: 1,
-					borderColor: 'white',
-					pointPadding: 0,
-					groupPadding: 0,
-				},
-				column: {
-					pointPadding: 0.2,
-					borderWidth: 0
-				}
-			  },
+				  plotOptions: {
+						series: {
+							shadow: false,
+							borderWidth: 1,
+							borderColor: 'white',
+							pointPadding: 0,
+							groupPadding: 0,
+						},
+						column: {
+							pointPadding: 0.2,
+							borderWidth: 0
+						}
+				  },
 		      legend: {
-		          layout: 'vertical',
-		          align: 'right',
-		          verticalAlign: 'top',
-		          x: -10,
-		          y: 100,
-		          borderWidth: 0,
-				  enabled:false
+	          layout: 'vertical',
+	          align: 'right',
+	          verticalAlign: 'top',
+	          x: -10,
+	          y: 100,
+	          borderWidth: 0,
+					  enabled:false
 		      },
 		      series: [{
-		          name: CONFIG.y_axis_label,
-		          data: hist_data.buckets,
-				  color:'#6c0'
+	          name: CONFIG.y_axis_label,
+	          data: hist_data.buckets,
+					  color:'#6c0'
 		      }]
 		    });
-
-	}
+	};
 
 	function drawDescriptStats(data){
-
 		var mean = ss.mean(data),
 				median = ss.median(data),
 				mode = String(calcMode(data)),
@@ -176,17 +172,17 @@
 		$('#range span').html(range);
 	};
 
-	var fetchNewData = function(){
+	function fetchData(){
 		var ds = new Miso.Dataset({
 		  importer : Miso.Dataset.Importers.GoogleSpreadsheet,
 		  parser : Miso.Dataset.Parsers.GoogleSpreadsheet,
 		  key : CONFIG.table_id,
-		  worksheet : "1"//,
-		  //fast: true
+		  worksheet : "1"
 		});
 
 		ds.fetch({
 		  success : function() {
+		  	console.log(this)
 		  	var data = this.column(CONFIG.column_name).data;
 		  	constructHistDataDrawChart(data);
 		  	drawDescriptStats(data);
@@ -195,45 +191,50 @@
 		  error : function() {
 		  }
 		});
+	};
 
-	}
-
-	$(window).bind( 'hashchange', function(e) {
-		if (window.location.hash != ''){
-			var state = $.bbq.getState()
-			CONFIG.table_id = state.key;
-			CONFIG.column_name = state.col;
-			SETTINGS.bin_or_break = state.bob;
-			SETTINGS.bin_break_number = state.bbn;
-		};
-		fetchNewData();
-	});
-
-	$('#break-controls input').change(function(){
-		SETTINGS.bin_or_break = $(this).val();
-	});
-	$('#bins-breaks').change(function(){
-		SETTINGS.bin_break_number = $(this).val();
-	});
-	$('#table-id').change(function(){
-		CONFIG.table_id = $(this).val();
-	});
-	$('#column-name').change(function(){
-		CONFIG.column_name = $(this).val();
-	});
-	$('#histagram-name').change(function(){
-		CONFIG.histagram_name = $(this).val();
-	});
-	$('#submit-btn').click(function(){
-		var key = {
-			l: CONFIG.table_id
-		}
-		$.bbq.pushState({
-			'key': CONFIG.table_id,
-			'col': CONFIG.column_name,
-			'bob': SETTINGS.bin_or_break,
-			'bbn': SETTINGS.bin_break_number
+	function bindHandlers(){
+		$('#break-controls input').change(function(){
+			SETTINGS.bin_or_break = $(this).val();
 		});
-	});
-	$(window).trigger( 'hashchange' );
+		$('#bins-breaks').change(function(){
+			SETTINGS.bin_break_number = $(this).val();
+		});
+		$('#table-id').change(function(){
+			CONFIG.table_id = $(this).val();
+		});
+		$('#column-name').change(function(){
+			CONFIG.column_name = $(this).val();
+		});
+		$('#histagram-name').change(function(){
+			CONFIG.histagram_name = $(this).val();
+		});
+
+		$('#submit-btn').click(function(){
+			$.bbq.pushState({
+				'key': CONFIG.table_id,
+				'col': CONFIG.column_name,
+				'bob': SETTINGS.bin_or_break,
+				'bbn': SETTINGS.bin_break_number
+			});
+		});
+		
+		$(window).bind( 'hashchange', function(e) {
+			if (window.location.hash != ''){
+				var state = $.bbq.getState()
+				CONFIG.table_id = state.key;
+				CONFIG.column_name = state.col;
+				SETTINGS.bin_or_break = state.bob;
+				SETTINGS.bin_break_number = state.bbn;
+			};
+			fetchData();
+		});
+	};
+
+	function startTheShow(){
+		bindHandlers();
+		$(window).trigger( 'hashchange' );
+	};
+	startTheShow();
+
 })();
