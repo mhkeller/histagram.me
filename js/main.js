@@ -3,8 +3,8 @@
 	// https://docs.google.com/spreadsheet/ccc?key=0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE#gid=0
 	var SETTINGS = {
 		bin_or_break: 'bin',
-		bin_break_number: 10,
-		clustering: 'jenks'
+		bin_break_number: 15,
+		clustering: 'even-bins'
 	};
 
 	var CONFIG = {
@@ -38,42 +38,13 @@
 	};
 
 	function createDataBuckets(data, binned_data, clustering){
-		var data_buckets = [];
-		if (clustering == 'd3'){
-			data_buckets  = _.map(binned_data, function(d) { return d.length } );
-		}else if (clustering == 'jenks'){
-			var thresholds = binned_data; // Lets rename it `thresholds` since that's more accurate for the array that the `jenks` fn returns.
-			jenks_scale = d3.scale.threshold()
-	      .domain(thresholds)
-	      .range(d3.range(binned_data.length ).map(function(i) { return i }));
-
-	    $.each(data, function(index, value){
-
-	    	var q = jenks_scale(value) - 1;
-		    if (!data_buckets[q]){
-		    	data_buckets[q] = 1;
-		    }else{
-			    data_buckets[q] = data_buckets[q] + 1
-		    };
-
-	    });
-
-	    // Fill in any missing indices as zeros
-	    data_buckets = _.map(data_buckets, function(d) { 
-	    	if (!d){
-	    		return 0;
-	    	} else{
-	    		return d;
-	    	};
-	    });
-
-		};
-
+		var data_buckets  = _.map(binned_data, function(d) { return d.length } );
+	
 		return data_buckets;
 	};
 
 	function createBinsAndXAxis(data, clustering){
-		var bins = calcBins(),
+		var bins = calcBins(data),
 				data_min = d3.min(data),
 				data_max = d3.max(data),
 				bin_xAxis = [],
@@ -81,46 +52,17 @@
 				bin_min,
 				bin_max;
 
-		/*
-			In a perfect world, this if statement is all we would need.
-			We would run our data through any different clustering algorithm and it would return us our data broken into different categories.
-			The d3 histogram layout returns an array of arrays, that show both the breaks and also contain the items that fall within those breaks.
-			That's really handy because it gives us the count of items.
-			Jenks, however, only returns the thresholds and so later on when we `createDataBuckets` we'll only need to look at the length of each of these arrays for D3.
-			But for jenks we'll need to do that calculation ourselves.
-			The two algorithms also have slightly different patterns of inclusivity and exclusivity on their bounds. So there are differences for that.
-		*/
-		if (clustering == 'd3'){
-			binned_data = d3.layout.histogram()
-			    .bins(bins)
-			    (data);
-		}else if (clustering == 'jenks') {
-			binned_data = ss.jenks(data, bins);
-
-			var jenks_min = d3.min(binned_data),
-					jenks_max = d3.max(binned_data);
-		};
+		binned_data = d3.layout.histogram()
+		    .bins(bins)
+		    (data);
 
 		$.each(binned_data, function(index, value){
 
-			if (clustering == 'd3'){
+			bin_min = rounderToNPlaces(value['x'], 2);
+			bin_max = '<' + rounderToNPlaces(value['x'] + value['dx'], 2);
+
+			if (value['x'] == data_min){
 				bin_min = rounderToNPlaces(value['x'], 2);
-				bin_max = '<' + rounderToNPlaces(value['x'] + value['dx'], 2);
-
-				if (value['x'] == data_min){
-					bin_min = rounderToNPlaces(value['x'], 2);
-				};
-
-			}else if (clustering == 'jenks'){
-				bin_min =  '>' + rounderToNPlaces(value, 2);
-				bin_max = rounderToNPlaces(binned_data[index + 1], 2);
-
-				if (value == jenks_min){
-					bin_min = value;
-					bin_max = binned_data[index + 1];
-				}else if (value == jenks_max){
-					return false;
-				};
 			};
 
 			bin_xAxis.push(String(bin_min + ' to ' + bin_max));
@@ -137,12 +79,17 @@
 	};
 
 
-	function calcBins(){
-		var bins;
+	function calcBins(data){
+		var user_bins_breaks = Number(SETTINGS.bin_break_number),
+			  bins;
 		if (SETTINGS.bin_or_break == 'break'){
-			bins = range / SETTINGS.bin_break_number;
+			bins = range / user_bins_breaks;
 		}else if (SETTINGS.bin_or_break == 'bin'){
-			bins = Number(SETTINGS.bin_break_number);
+			if (SETTINGS.clustering == 'even-bins'){
+				bins = user_bins_breaks;
+			}else if (SETTINGS.clustering == 'jenks'){
+				bins = ss.jenks(data, user_bins_breaks);
+			};
 		};
 
 		return bins;
@@ -285,6 +232,9 @@
 		});
 		$('#bins-breaks').change(function(){
 			SETTINGS.bin_break_number = $(this).val();
+		});
+		$('#clustering').change(function(){
+			SETTINGS.clustering = $(this).val();
 		});
 		$('#table-id').change(function(){
 			CONFIG.table_id = $(this).val();

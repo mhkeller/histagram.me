@@ -1,55 +1,62 @@
 #controls{
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
 	font-weight: 300;
-	float:left;
-	width:590px;
+}
+.clearfix{
+	clear: both;
 }
 .header{
-	font-weight:bold;
+	font-weight: bold;
 	letter-spacing: 1px;
-
 }
 .radio-option{
-	font-size:12px;
+	font-size: 12px;
 	letter-spacing: 1px;
+	margin-top: -7px;
+	line-height: 27px;
 }
 .control-block{
-	float:left;
-	margin-right:20px;
-}
-.float-me{
-	float:left;
+	margin-right: 20px;
+	float: left;
 }
 #controls-transformation .radio-option{
-	float:left;
-	width:100px;
-	margin-bottom:5px;
+	width: 100px;
+	margin-bottom: 5px;
 }
 #controls-transformation{
-	width:200px;
-	margin:0 0 0 20px;
+	width: 200px;
+	margin: 0 0 0 20px;
 }
 h4{
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
 	font-weight: 300;
-	margin:10px;
+	margin: 10px 0 10px 0;
 }
 #descriptive-stats{
-	float:left;
+	margin: 20px 0 0 0;
+	text-align: center;
 }
 .stat{
 	/*width:110px;*/
-	margin-right:35px;
-	display:inline-block;
+	margin-right: 35px;
+	display: inline-block;
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
 	font-weight: 300;
 }
 #chart-container{
-	float:left;
 }
 #break-controls{
-	line-height:22px;
+	line-height: 22px;
 }
 #submit-btn{
-	width:126px;
+	width: 126px;
+}
+#clustering{
+	width: 100px;
+}
+.control-header{
+	font-size: 13px;
+	font-weight: bold;
+	letter-spacing: 1px;
+	margin-bottom: 5px;
 }

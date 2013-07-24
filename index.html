@@ -19,15 +19,22 @@
 
 	<div id="controls">
 		<div id="controls-table-key" class="control-block">
+			<div class="control-header">Table info</div>
 			<input id="table-id" type="text" placeholder="Spreadsheet key" /><br/>
-			<input id="column-name" type="text" placeholder="Column name" />
+			<input id="column-name" type="text" placeholder="Data column name" />
 		</div>
 		<div id="break-controls" class="control-block">
+			<div class="control-header">Binning</div>
 			<div class="radio-option"><input type="radio" value="bin" name="group1" checked/> Bin number</div>
 			<div class="radio-option"><input type="radio" value="break" name="group1"/> Break distance</div>
+			<input id="bins-breaks" type="text" placeholder="Default = 15" />
 		</div>
 		<div class="control-block">
-			<input id="bins-breaks" type="text" placeholder="Default = 15" />
+			<div class="control-header">Bin clustering</div>
+			<select id="clustering" >
+				<option value="even-bins">Even bins</option>
+				<option value="jenks">Jenks (Natural breaks)</option>
+			</select>
 		</div>
 		<div id="controls-transformation" class="control-block" style="display:none;">
 			<div class="radio-option"><input type="radio" value="raw" name="group2" checked/> Raw</div>
@@ -35,13 +42,11 @@
 			<div class="radio-option"><input type="radio" value="ln" name="group2" /> ln()</div>
 			<div class="radio-option"><input type="radio" value="square" name="group2" /> &#8730;</div>
 		</div>
-		<div class="control-block">
-			<input id="bins-breaks" type="text" placeholder="Default = 15" />
-		</div>
 		<div>
 			<input id="submit-btn" type="submit" value="Histagram Me!"/>
 		</div>
 	</div>
+	<div class="clearfix"></div>
 	<div id="descriptive-stats">
 		<span id="mean" class="stat"><strong>Mean</strong>: <span>&#8212;</span></span>
 		<span id="median" class="stat"><strong>Median</strong>: <span>&#8212;</span></span>
