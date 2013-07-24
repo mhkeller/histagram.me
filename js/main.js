@@ -210,12 +210,12 @@
 
 	function fetchData(){
 		var ds = new Miso.Dataset({
-			url: 'data/dummy-data.csv',
-			delimiter: ','
-		  // importer : Miso.Dataset.Importers.GoogleSpreadsheet,
-		  // parser : Miso.Dataset.Parsers.GoogleSpreadsheet,
-		  // key : CONFIG.table_id,
-		  // worksheet : "1"
+			// url: 'data/dummy-data.csv',
+			// delimiter: ','
+		  importer : Miso.Dataset.Importers.GoogleSpreadsheet,
+		  parser : Miso.Dataset.Parsers.GoogleSpreadsheet,
+		  key : CONFIG.table_id,
+		  worksheet : "1"
 		});
 
 		ds.fetch({
