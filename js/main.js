@@ -47,7 +47,7 @@
 	  var data_min  = d3.min(data),
 				data_max  = d3.max(data),
 				range     = data_max - data_min,
-		    bins      = calcBins(data, range),
+		    bins      = calcBins(data, range, data_min, data_max),
 				bin_xAxis = [],
 				binned_data,
 				bin_min,
@@ -81,7 +81,7 @@
 	};
 
 
-	function calcBins(data, range){
+	function calcBins(data, range, data_min, data_max){
 		var user_bins_breaks = Number(SETTINGS.bins_breaks_number),
 			  bins;
 
@@ -89,6 +89,8 @@
 			bins = user_bins_breaks;
 		}else if (SETTINGS.binning == 'jenks'){
 			bins = ss.jenks(data, user_bins_breaks);
+		}else if (SETTINGS.binning == 'head-tail'){
+			bins = stats.headTail(data, data_min, data_max);
 		}else if (SETTINGS.binning == 'custom-breaks'){
 			bins = _.map(SETTINGS.bins_breaks_number.split(','), function (d) { return parseInt(d)} )
 		}else if (SETTINGS.binning == 'custom-interval'){
@@ -98,8 +100,8 @@
 		return bins;
 	};
 
-	// http://rosettacode.org/wiki/Averages/Mode#JavaScript
-	function calcMode(ary) {
+	var stats = {
+		mode: function(ary){
 	    var counter = {},
 	    		mode = [],
 	    		max = 0;
@@ -116,6 +118,19 @@
 	        };
 	    };
 	    return mode;
+		},
+		headTail: function(arr, data_min, data_max){
+			var mean = ss.mean(arr),
+					bins = [data_min];
+
+			while (arr.length > 1){
+				arr = _.filter(arr, function(d) { return d > mean } );
+				mean = ss.mean(arr);
+				bins.push(mean)
+			};
+
+			return bins;
+		}
 	};
 
 	function drawHighChart(hist_data){
@@ -197,7 +212,7 @@
 	function drawDescriptStats(data){
 		var mean   = ss.mean(data),
 			  median = ss.median(data),
-			  mode   = String(calcMode(data).join(', ')),
+			  mode   = String(stats.mode(data).join(', ')),
 			  range  = d3.min(data) + '-' + d3.max(data);
 
 		$('#mean span').html(Math.round(mean * 100) / 100);
