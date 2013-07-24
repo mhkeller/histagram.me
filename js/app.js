@@ -4,7 +4,7 @@
 	var SETTINGS = {
 		bin_or_break: 'bin',
 		bin_break_number: 15,
-		clustering: 'd3'
+		clustering: 'jenks'
 	};
 
 	var CONFIG = {
@@ -12,6 +12,11 @@
 		column_name: 'data',
 		histagram_name: 'Histagram',
 		y_axis_label: 'Count',
+	};
+
+	function rounderToNPlaces(num, places) {
+    var multiplier = Math.pow(10, places);
+    return Math.round(num * multiplier) / multiplier;
 	};
 
 	function constructHistDataDrawChart(data){
@@ -47,20 +52,21 @@
 			var jenks_min = d3.min(binned_data),
 					jenks_max = d3.max(binned_data);
 		};
+		console.log(binned_data)
 
 		$.each(binned_data, function(index, value){
 
 			if (clustering == 'd3'){
-				bin_min = Math.round(value['x']);
-				bin_max = '<'+Math.round(value['x'] + value['dx']);
+				bin_min = rounderToNPlaces(value['x'], 2);
+				bin_max = '<' + rounderToNPlaces(value['x'] + value['dx'], 2);
 
 				if (value['x'] == data_min){
-					bin_min = Math.round(value['x']);
+					bin_min = rounderToNPlaces(value['x'], 2);
 				};
 
 			}else if (clustering == 'jenks'){
-				bin_min =  '>' + value;
-				bin_max = binned_data[index + 1];
+				bin_min =  '>' + rounderToNPlaces(value, 2);
+				bin_max = rounderToNPlaces(binned_data[index + 1], 2);
 
 				if (value == jenks_min){
 					bin_min = value;
