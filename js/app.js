@@ -182,7 +182,6 @@
 
 		ds.fetch({
 		  success : function() {
-		  	console.log(this)
 		  	var data = this.column(CONFIG.column_name).data;
 		  	constructHistDataDrawChart(data);
 		  	drawDescriptStats(data);
