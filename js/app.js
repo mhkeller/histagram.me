@@ -3,7 +3,8 @@
 	// https://docs.google.com/spreadsheet/ccc?key=0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE#gid=0
 	var SETTINGS = {
 		bin_or_break: 'bin',
-		bin_break_number: 15
+		bin_break_number: 15,
+		clustering: 'd3'
 	};
 
 	var CONFIG = {
@@ -19,48 +20,56 @@
 	};
 
 	function constructHistData(data){
-		var data_buckets = [],
+		var bins = calcBins(),
 				max = d3.max(data),
 				min = d3.min(data),
 				range = max - min,
 				data_buckets = [],
-				xAxis = [],
-				bins; 
+				xAxis = [];
 
+		if (SETTINGS.clustering == 'd3'){
+			// Generate a histogram using n uniformly-spaced bins.
+			var binned_data = d3.layout.histogram()
+			    .bins(bins)
+			    (data);
+
+			$.each(binned_data, function(index, value){
+				// Construct X Axis of ranges
+				var bin_min = Math.round(value['x']),
+						bin_max;
+				if (Math.round(value['x'] + value['dx']) != max){
+					bin_max = Math.round(value['x'] + value['dx'] - 1)
+				}else{
+					bin_max = Math.round(value['x'] + value['dx'])
+				};
+				xAxis.push(String(bin_min + "-" + bin_max))
+
+				// Construct data from lengths of bins
+				data_buckets.push(value.length)
+
+			});
+
+			var hist_data = {
+				buckets: data_buckets, 
+				x_axis: xAxis
+			};
+
+			return hist_data;
+		}else if (SETTINGS.clustering == 'jenks'){
+
+		};
+
+	};
+
+	function calcBins(){
+		var bins;
 		if (SETTINGS.bin_or_break == 'break'){
 			bins = range / SETTINGS.bin_break_number;
 		}else{
 			bins = Number(SETTINGS.bin_break_number);
 		};
 
-		// Generate a histogram using n uniformly-spaced bins.
-		var binned_data = d3.layout.histogram()
-		    .bins(bins)
-		    (data);
-
-		$.each(binned_data, function(index, value){
-			// Construct X Axis of ranges
-			var bin_min = Math.round(value['x'])
-			if ( Math.round(value['x'] + value['dx']) != max){
-				var bin_max = Math.round(value['x'] + value['dx'] - 1)
-			}else{
-				var bin_max = Math.round(value['x'] + value['dx'])
-			};
-
-			xAxis.push(String(bin_min + "-" + bin_max))
-
-			// Construct data from lengths of bins
-			data_buckets.push(value.length)
-
-		});
-
-		var hist_data = {
-			buckets: data_buckets, 
-			x_axis: xAxis
-		};
-
-		return hist_data;
-
+		return bins;
 	};
 
 	// http://rosettacode.org/wiki/Averages/Mode#JavaScript
@@ -163,7 +172,7 @@
 	function drawDescriptStats(data){
 		var mean = ss.mean(data),
 				median = ss.median(data),
-				mode = String(calcMode(data)),
+				mode = String(calcMode(data).join(', ')),
 				range = d3.min(data) + '-' + d3.max(data);
 
 		$('#mean span').html(Math.round(mean * 100) / 100);
@@ -234,6 +243,7 @@
 		bindHandlers();
 		$(window).trigger( 'hashchange' );
 	};
+
 	startTheShow();
 
 })();
