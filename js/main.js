@@ -252,13 +252,22 @@
 	};
 
 	function setBinsBreaksNumberLabel(val){
-		$label = $('#bins_breaks_number_label')
+		var $label = $('#bins_breaks_number_label'),
+				$field = $('#bins-breaks'),
+				numb_val    = $field.data('val');
+
+		$field.val(numb_val);
+		$field.removeAttr('disabled');
+
 		if (val == 'jenks' || val == 'even'){
-			$label.html('How many bins?')
+			$label.html('How many bins?');
+		}else if (val == 'head-tail'){
+			$label.html('Bins set automatically.');
+			$field.val('NA').attr('disabled', 'disabled');
 		}else if (val == 'custom-breaks'){
-			$label.html('Enter your thresholds, min and max included. e.g. 1, 4, 12, 99')
+			$label.html('Enter your thresholds, min and max included. e.g. 1, 4, 12, 99');
 		}else if (val == 'custom-interval'){
-			$label.html('Break every...')
+			$label.html('Break every...');
 		}
 	};
 
@@ -278,7 +287,9 @@
 			CONFIG.column_name = $(this).val();
 		});
 		$('#bins-breaks').keyup(function(){
-			SETTINGS.bins_breaks_number = $(this).val();
+			var val = $(this).val();
+			$(this).data('val', val);
+			SETTINGS.bins_breaks_number = val;
 		});
 		$('#binning').change(function(){
 			var val = $(this).val();
