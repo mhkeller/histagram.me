@@ -1,6 +1,18 @@
 #controls{
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
 	font-weight: 300;
+	overflow: auto;
+}
+label {
+	font-size: 12px;
+	letter-spacing: 1px;
+	width: 150px;
+	display: block;
+}
+input, select{
+	width: 150px;
+	position: relative;
+	margin: 0 0 10px 0;
 }
 .clearfix{
 	clear: both;
@@ -30,7 +42,7 @@
 h4{
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
 	font-weight: 300;
-	margin: 10px 0 10px 0;
+	margin: 0 0 20px 0;
 }
 #descriptive-stats{
 	margin: 20px 0 0 0;
@@ -42,16 +54,14 @@ h4{
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
 	font-weight: 300;
 }
-#chart-container{
+#binning{
+	top: -1px;
 }
 #break-controls{
 	line-height: 22px;
 }
 #submit-btn{
 	width: 126px;
-}
-#clustering{
-	width: 100px;
 }
 .control-block.disabled{
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";

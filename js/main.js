@@ -3,9 +3,8 @@
 	// https://docs.google.com/spreadsheet/ccc?key=0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE#gid=0
 	var SETTINGS = {
 		data: null,
-		bins_or_breaks: 'bins',
-		bins_breaks_number: 15,
-		clustering: 'jenks'
+		binning: 'jenks',
+		bins_breaks_number: 15
 	};
 
 	var CONFIG = {
@@ -26,8 +25,8 @@
 	};
 
 	function constructHistData(data){
-		var bin_info = createBinsAndXAxis(data, SETTINGS.clustering),
-				data_buckets = createDataBuckets(data, bin_info.binned_data, SETTINGS.clustering);
+		var bin_info = createBinsAndXAxis(data, SETTINGS.binning),
+				data_buckets = createDataBuckets(data, bin_info.binned_data, SETTINGS.binning);
 		
 		var hist_data = {
 			bin_xAxis: bin_info.bin_xAxis,
@@ -38,13 +37,13 @@
 	
 	};
 
-	function createDataBuckets(data, binned_data, clustering){
+	function createDataBuckets(data, binned_data, binning){
 		var data_buckets  = _.map(binned_data, function(d) { return d.length } );
 	
 		return data_buckets;
 	};
 
-	function createBinsAndXAxis(data, clustering){
+	function createBinsAndXAxis(data, binning){
 	  var data_min  = d3.min(data),
 				data_max  = d3.max(data),
 				range     = data_max - data_min,
@@ -86,15 +85,14 @@
 		var user_bins_breaks = Number(SETTINGS.bins_breaks_number),
 			  bins;
 
-
-		if (SETTINGS.bins_or_breaks == 'breaks'){
+		if (SETTINGS.binning == 'even'){
+			bins = user_bins_breaks;
+		}else if (SETTINGS.binning == 'jenks'){
+			bins = ss.jenks(data, user_bins_breaks);
+		}else if (SETTINGS.binning == 'custom-breaks'){
+			bins = _.map(SETTINGS.bins_breaks_number.split(','), function (d) { return parseInt(d)} )
+		}else if (SETTINGS.binning == 'custom-interval'){
 			bins = range / user_bins_breaks;
-		}else if (SETTINGS.bins_or_breaks == 'bins'){
-			if (SETTINGS.clustering == 'even'){
-				bins = user_bins_breaks;
-			}else if (SETTINGS.clustering == 'jenks'){
-				bins = ss.jenks(data, user_bins_breaks);
-			};
 		};
 
 		return bins;
@@ -238,24 +236,23 @@
 		}
 	};
 
-	function clusterDropdownState(state){
-		if (state == 'bins'){
-			$('#cluster-controls').removeClass('disabled').find('#clustering').removeAttr('disabled');
-		}else{
-			$('#cluster-controls').addClass('disabled').find('#clustering').attr('disabled', 'disabled');
-		};
-	};
-
-	function checkControlStates(){
-		clusterDropdownState(SETTINGS.bins_or_breaks);
+	function setBinsBreaksNumberLabel(val){
+		$label = $('#bins_breaks_number_label')
+		if (val == 'jenks' || val == 'even'){
+			$label.html('How many bins?')
+		}else if (val == 'custom-breaks'){
+			$label.html('Enter your thresholds, min and max included. e.g. 1, 4, 12, 99')
+		}else if (val == 'custom-interval'){
+			$label.html('Break every...')
+		}
 	};
 
 	function updateFormEls(){
 		$('#bins-breaks').val(SETTINGS.bins_breaks_number);
 		$('#table-id').val(CONFIG.table_id);
 		$('#column-name').val(CONFIG.column_name);
-		$('#break-controls input[value="'+SETTINGS.bins_or_breaks+'"]').attr('checked', 'checked');
-		$('#clustering').val(SETTINGS.clustering).attr('selected', 'selected');
+		$('#binning').val(SETTINGS.binning).attr('selected', 'selected');
+		setBinsBreaksNumberLabel(SETTINGS.binning);
 	};
 
 	function bindHandlers(){
@@ -265,16 +262,13 @@
 		$('#column-name').keyup(function(){
 			CONFIG.column_name = $(this).val();
 		});
-		$('#break-controls input[name="binning"]').change(function(){
-			var val = $(this).val();
-			SETTINGS.bins_or_breaks = val;
-			clusterDropdownState(val);
-		});
 		$('#bins-breaks').keyup(function(){
 			SETTINGS.bins_breaks_number = $(this).val();
 		});
-		$('#clustering').change(function(){
-			SETTINGS.clustering = $(this).val();
+		$('#binning').change(function(){
+			var val = $(this).val();
+			SETTINGS.binning = val;
+			setBinsBreaksNumberLabel(val);
 		});
 		// $('#histagram-name').change(function(){
 		// 	CONFIG.histagram_name = $(this).val();
@@ -284,9 +278,8 @@
 			$.bbq.pushState({
 				'key': CONFIG.table_id,
 				'col': CONFIG.column_name,
-				'bob': SETTINGS.bins_or_breaks,
 				'bbn': SETTINGS.bins_breaks_number,
-				'cluster': SETTINGS.clustering
+				'binning': SETTINGS.binning
 			});
 		});
 		
@@ -295,12 +288,10 @@
 				var state = $.bbq.getState()
 				CONFIG.table_id = state.key;
 				CONFIG.column_name = state.col;
-				SETTINGS.bins_or_breaks = state.bob;
 				SETTINGS.bins_breaks_number = state.bbn;
-				SETTINGS.clustering = state.cluster;
-				updateFormEls();
+				SETTINGS.binning = state.binning;
 			};
-			checkControlStates();
+			updateFormEls();
 			loadData();
 		});
 	};

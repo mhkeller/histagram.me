@@ -20,21 +20,27 @@
 	<div id="controls">
 		<div id="controls-table-key" class="control-block">
 			<div class="control-header">Table info</div>
-			<input id="table-id" type="text" placeholder="Spreadsheet key" /><br/>
-			<input id="column-name" type="text" placeholder="Data column name" />
+			<label for="table_id">Spreadsheet key:</label>
+			<input id="table-id" type="text" placeholder="..." name="table_id" /><br/>
+			<label for="column_name">Data column name:</label>
+			<input id="column-name" type="text" placeholder="..." name="column_name"/>
 		</div>
-		<div id="break-controls" class="control-block">
+<!-- 		<div id="break-controls" class="control-block">
 			<div class="control-header">Binning</div>
 			<div class="radio-option"><input type="radio" value="bins" name="binning" checked/> Bin number</div>
 			<div class="radio-option"><input type="radio" value="breaks" name="binning"/> Break distance</div>
-			<input id="bins-breaks" type="text" placeholder="Default = 15" />
-		</div>
-		<div class="control-block" id="cluster-controls">
-			<div class="control-header">Bin clustering</div>
-			<select id="clustering">
+		</div> -->		
+ 		<div class="control-block" id="cluster-controls">
+			<div class="control-header">Binning</div>
+			<label for="binning">Type:</label>
+			<select id="binning" name="binning">
 				<option value="jenks">Jenks (Natural breaks)</option>
 				<option value="even">Even bins</option>
+				<option value="custom-breaks">Custom breaks</option>
+				<option value="custom-interval">Custom interval</option>
 			</select>
+			<label for="bins_breaks_number" id="bins_breaks_number_label">Select one</label>
+			<input id="bins-breaks" type="text" placeholder="Default = 15" name="bins_breaks_number"/>
 		</div>
 		<div id="controls-transformation" class="control-block" style="display: none;">
 			<div class="radio-option"><input type="radio" value="raw" name="transformations" checked/> Raw</div>
@@ -57,15 +63,15 @@
 	<script src="js/main.js"></script>
 	<script type="text/javascript">
 
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-39274729-1']);
-	  _gaq.push(['_trackPageview']);
+	  // var _gaq = _gaq || [];
+	  // _gaq.push(['_setAccount', 'UA-39274729-1']);
+	  // _gaq.push(['_trackPageview']);
 
-	  (function() {
-	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
+	  // (function() {
+	  //   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	  //   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	  //   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  // })();
 
 </script>
 </body>
