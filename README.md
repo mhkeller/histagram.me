@@ -9,7 +9,7 @@
 	<li>Copy the key i.e. 0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE.</li>
 	<li>Paste that into the textfield, enter the column name that holds your data and hit the button.</li>
 </ol>
-<p>It defaults to a [Jenks natural reaks](http://en.wikipedia.org/wiki/Jenks_natural_breaks_optimization) clustering, which is used by cartographers to maximize the similarity within groups and the difference between groups. For something less fancier, you have the option of simply setting an even number bins or specific break intervals.</p>
+<p>It defaults to a <a href="http://en.wikipedia.org/wiki/Jenks_natural_breaks_optimization" target="_blank">Jenks natural breaks</a> clustering, which is used by cartographers to maximize the similarity within groups and the difference between groups. For something less fancier, you have the option of simply setting an even number bins or specific break intervals.</p>
 <p>Logo + domain support by <a href="http://github.com/abelsonlive" target="_blank">Brian Abelson</a></p>
 <p><strong>Contact:</strong> <a href="http://www.twitter.com/mhkeller" target="_blank">@mhkeller</a></p>
 </article>
