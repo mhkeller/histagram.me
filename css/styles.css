@@ -37,7 +37,6 @@ h4{
 	text-align: center;
 }
 .stat{
-	/*width:110px;*/
 	margin-right: 35px;
 	display: inline-block;
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
@@ -53,6 +52,14 @@ h4{
 }
 #clustering{
 	width: 100px;
+}
+.control-block.disabled{
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=50);
+	-webkit-opacity: .5;
+  -khtml-opacity: 0.5;
+  -moz-opacity: 0.5;
+	opacity: .5;
 }
 .control-header{
 	font-size: 13px;

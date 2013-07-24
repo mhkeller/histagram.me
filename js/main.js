@@ -2,9 +2,10 @@
 	// Reference for data
 	// https://docs.google.com/spreadsheet/ccc?key=0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE#gid=0
 	var SETTINGS = {
-		bin_or_break: 'bin',
-		bin_break_number: 15,
-		clustering: 'even-bins'
+		data: null,
+		bins_or_breaks: 'bins',
+		bins_breaks_number: 15,
+		clustering: 'jenks'
 	};
 
 	var CONFIG = {
@@ -25,7 +26,7 @@
 	};
 
 	function constructHistData(data){
-		var bin_info = createBinsAndXAxis(data, SETTINGS.clustering);
+		var bin_info = createBinsAndXAxis(data, SETTINGS.clustering),
 				data_buckets = createDataBuckets(data, bin_info.binned_data, SETTINGS.clustering);
 		
 		var hist_data = {
@@ -44,13 +45,15 @@
 	};
 
 	function createBinsAndXAxis(data, clustering){
-		var bins = calcBins(data),
-				data_min = d3.min(data),
-				data_max = d3.max(data),
+	  var data_min  = d3.min(data),
+				data_max  = d3.max(data),
+				range     = data_max - data_min,
+		    bins      = calcBins(data, range),
 				bin_xAxis = [],
 				binned_data,
 				bin_min,
 				bin_max;
+
 
 		binned_data = d3.layout.histogram()
 		    .bins(bins)
@@ -79,13 +82,15 @@
 	};
 
 
-	function calcBins(data){
-		var user_bins_breaks = Number(SETTINGS.bin_break_number),
+	function calcBins(data, range){
+		var user_bins_breaks = Number(SETTINGS.bins_breaks_number),
 			  bins;
-		if (SETTINGS.bin_or_break == 'break'){
+
+
+		if (SETTINGS.bins_or_breaks == 'breaks'){
 			bins = range / user_bins_breaks;
-		}else if (SETTINGS.bin_or_break == 'bin'){
-			if (SETTINGS.clustering == 'even-bins'){
+		}else if (SETTINGS.bins_or_breaks == 'bins'){
+			if (SETTINGS.clustering == 'even'){
 				bins = user_bins_breaks;
 			}else if (SETTINGS.clustering == 'jenks'){
 				bins = ss.jenks(data, user_bins_breaks);
@@ -217,41 +222,72 @@
 		ds.fetch({
 		  success : function() {
 		  	var data = this.column(CONFIG.column_name).data;
-		  	constructHistDataDrawChart(data);
-		  	drawDescriptStats(data);
-
+		  	createHistogram(data);
 		  },
 		  error : function() {
 		  }
 		});
 	};
 
+	function createHistogram(data){
+		try{
+	  	constructHistDataDrawChart(data);
+	  	drawDescriptStats(data);
+		}
+		catch(err){
+			alert("Error: Try selecting fewer bins or smaller breaks.")
+		}
+	};
+
+	function clusterDropdownState(state){
+		if (state == 'bins'){
+			$('#cluster-controls').removeClass('disabled').find('#clustering').removeAttr('disabled');
+		}else{
+			$('#cluster-controls').addClass('disabled').find('#clustering').attr('disabled', 'disabled');
+		};
+	};
+
+	function checkControlStates(){
+		clusterDropdownState(SETTINGS.bins_or_breaks);
+	};
+
+	function updateFormEls(){
+		$('#bins-breaks').val(SETTINGS.bins_breaks_number);
+		$('#table-id').val(CONFIG.table_id);
+		$('#column-name').val(CONFIG.column_name);
+		$('#break-controls input[value="'+SETTINGS.bins_or_breaks+'"]').attr('checked', 'checked');
+		$('#clustering').val(SETTINGS.clustering).attr('selected', 'selected');
+	};
+
 	function bindHandlers(){
-		$('#break-controls input').change(function(){
-			SETTINGS.bin_or_break = $(this).val();
+		$('#table-id').keyup(function(){
+			CONFIG.table_id = $(this).val();
 		});
-		$('#bins-breaks').change(function(){
-			SETTINGS.bin_break_number = $(this).val();
+		$('#column-name').keyup(function(){
+			CONFIG.column_name = $(this).val();
+		});
+		$('#break-controls input[name="binning"]').change(function(){
+			var val = $(this).val();
+			SETTINGS.bins_or_breaks = val;
+			clusterDropdownState(val);
+		});
+		$('#bins-breaks').keyup(function(){
+			SETTINGS.bins_breaks_number = $(this).val();
 		});
 		$('#clustering').change(function(){
 			SETTINGS.clustering = $(this).val();
 		});
-		$('#table-id').change(function(){
-			CONFIG.table_id = $(this).val();
-		});
-		$('#column-name').change(function(){
-			CONFIG.column_name = $(this).val();
-		});
-		$('#histagram-name').change(function(){
-			CONFIG.histagram_name = $(this).val();
-		});
+		// $('#histagram-name').change(function(){
+		// 	CONFIG.histagram_name = $(this).val();
+		// });
 
 		$('#submit-btn').click(function(){
 			$.bbq.pushState({
 				'key': CONFIG.table_id,
 				'col': CONFIG.column_name,
-				'bob': SETTINGS.bin_or_break,
-				'bbn': SETTINGS.bin_break_number
+				'bob': SETTINGS.bins_or_breaks,
+				'bbn': SETTINGS.bins_breaks_number,
+				'cluster': SETTINGS.clustering
 			});
 		});
 		
@@ -260,11 +296,22 @@
 				var state = $.bbq.getState()
 				CONFIG.table_id = state.key;
 				CONFIG.column_name = state.col;
-				SETTINGS.bin_or_break = state.bob;
-				SETTINGS.bin_break_number = state.bbn;
+				SETTINGS.bins_or_breaks = state.bob;
+				SETTINGS.bins_breaks_number = state.bbn;
+				SETTINGS.clustering = state.cluster;
+				updateFormEls();
 			};
-			fetchData();
+			checkControlStates();
+			loadData();
 		});
+	};
+
+	function loadData(){
+		if (SETTINGS.data == null){
+			fetchData();
+		}else{
+			createHistogram(SETTINGS.data)
+		};
 	};
 
 	function startTheShow(){
