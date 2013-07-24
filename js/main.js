@@ -130,7 +130,7 @@
       },
       title: {
         text: CONFIG.histagram_name,
-        x: 0,
+        x: -18,
 		 		style: {
 					color: '#303030',
 					font: 'normal 16px "Arial", sans-serif'
@@ -138,7 +138,6 @@
       },
       subtitle: {
         text: '',
-        x: -20
       },
       xAxis: {
         categories: hist_data.bin_xAxis,
