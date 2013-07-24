@@ -16,56 +16,74 @@
 
 	function constructHistDataDrawChart(data){
 		var hist_data = constructHistData(data);
-		drawHighChart(hist_data);
+		// drawHighChart(hist_data);
 	};
 
 	function constructHistData(data){
-		var bins = calcBins(),
-				max = d3.max(data),
-				min = d3.min(data),
-				range = max - min,
-				data_buckets = [],
-				xAxis = [];
-
-		if (SETTINGS.clustering == 'd3'){
-			// Generate a histogram using n uniformly-spaced bins.
-			var binned_data = d3.layout.histogram()
-			    .bins(bins)
-			    (data);
-
-			$.each(binned_data, function(index, value){
-				// Construct X Axis of ranges
-				var bin_min = Math.round(value['x']),
-						bin_max;
-				if (Math.round(value['x'] + value['dx']) != max){
-					bin_max = Math.round(value['x'] + value['dx'] - 1)
-				}else{
-					bin_max = Math.round(value['x'] + value['dx'])
-				};
-				xAxis.push(String(bin_min + "-" + bin_max))
-
-				// Construct data from lengths of bins
-				data_buckets.push(value.length)
-
-			});
-
-			var hist_data = {
-				buckets: data_buckets, 
-				x_axis: xAxis
-			};
-
-			return hist_data;
-		}else if (SETTINGS.clustering == 'jenks'){
-
-		};
+		var xAxis = createXaxis(data, SETTINGS.clustering);
+				// data_buckets = createDataBuckets(data, SETTINGS.clustering);
+		
+		console.log(xAxis)
+	
 
 	};
+
+	function createXaxis(data, clustering){
+		var bins = calcBins(),
+				data_min = d3.min(data),
+				data_max = d3.max(data),
+				xAxis = [],
+				binned_data,
+				bin_min,
+				bin_max;
+
+		if (clustering == 'd3'){
+			binned_data = d3.layout.histogram()
+			    .bins(bins)
+			    (data);
+		}else if (clustering == 'jenks') {
+			binned_data = ss.jenks(data, bins);
+
+			var jenks_min = d3.min(binned_data),
+					jenks_max = d3.max(binned_data);
+		};
+
+		$.each(binned_data, function(index, value){
+
+			if (clustering == 'd3'){
+				bin_min = Math.round(value['x']);
+				bin_max = '<'+Math.round(value['x'] + value['dx']);
+
+				if (value['x'] == data_min){
+					bin_min = Math.round(value['x']);
+				};
+
+			}else if (clustering == 'jenks'){
+				bin_min =  '>' + value;
+				bin_max = binned_data[index + 1];
+
+				if (value == jenks_min){
+					bin_min = value;
+					bin_max = binned_data[index + 1];
+				}else if (value == jenks_max){
+					return false
+				};
+			};
+
+			xAxis.push(String(bin_min + "-" + bin_max));
+
+		});
+
+		return xAxis;
+
+	};
+
 
 	function calcBins(){
 		var bins;
 		if (SETTINGS.bin_or_break == 'break'){
 			bins = range / SETTINGS.bin_break_number;
-		}else{
+		}else if (SETTINGS.bin_or_break == 'bin'){
 			bins = Number(SETTINGS.bin_break_number);
 		};
 
