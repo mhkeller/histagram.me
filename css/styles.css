@@ -1,13 +1,20 @@
+a{
+	color: #303030;
+}
+a:hover{
+	color: #6c0;
+}
 #controls{
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", Helvetica,sans-serif;
 	font-weight: 300;
 	overflow: auto;
 }
-label {
+.tab, label {
 	font-size: 12px;
 	letter-spacing: 1px;
 	width: 150px;
 	display: block;
+	padding: 2px 0;
 }
 input, select{
 	width: 150px;
@@ -76,4 +83,29 @@ h4{
 	font-weight: bold;
 	letter-spacing: 1px;
 	margin-bottom: 5px;
+}
+.tab{
+	width: auto;
+	color: #ACACAC;
+	padding: 1px 8px;
+	display: inline-block;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: -moz-none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.tab:hover{
+	cursor: hand;
+	cursor: pointer;
+	text-decoration: underline;
+}
+.tab.active{
+	color: #fff;
+	background-color: #6c0;
+}
+.tab.active:hover{
+	cursor: default;
+	text-decoration: none;
 }

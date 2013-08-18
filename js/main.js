@@ -8,6 +8,7 @@
 	};
 
 	var CONFIG = {
+		data_source: 'gdoc',
 		table_id: '0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE',
 		column_name: 'data',
 		histagram_name: 'Histagram',
@@ -221,15 +222,29 @@
 		$('#range span').html(range);
 	};
 
-	function fetchData(){
-		var ds = new Miso.Dataset({
-			// url: 'data/dummy-data.csv',
-			// delimiter: ','
-		  importer : Miso.Dataset.Importers.GoogleSpreadsheet,
-		  parser : Miso.Dataset.Parsers.GoogleSpreadsheet,
-		  key : CONFIG.table_id,
-		  worksheet : "1"
-		});
+	function defineDs(file_reader_data){
+		var ds_options = {}
+
+		if (CONFIG.data_source == 'gdoc'){
+			ds_options = {
+			  importer : Miso.Dataset.Importers.GoogleSpreadsheet,
+			  parser : Miso.Dataset.Parsers.GoogleSpreadsheet,
+			  key : CONFIG.table_id,
+			  worksheet : "1"
+			};
+		}else{
+			ds_options = {
+			  data: file_reader_data
+			};
+		};
+
+		var ds = new Miso.Dataset(ds_options);
+		return ds;
+
+	};
+
+	function fetchData(file_reader_data){
+		var ds = defineDs(file_reader_data);
 
 		ds.fetch({
 		  success : function() {
@@ -237,6 +252,7 @@
 		  	createHistogram(data);
 		  },
 		  error : function() {
+		  	alert('Error retrieving file. Check your internet connection or try reuploading your file.');
 		  }
 		});
 	};
@@ -247,7 +263,7 @@
 	  	drawDescriptStats(data);
 		}
 		catch(err){
-			alert("Error: Try selecting fewer bins or smaller breaks.")
+			alert("Error: Try selecting fewer bins or smaller breaks.");
 		}
 	};
 
@@ -273,7 +289,7 @@
 
 	function updateFormEls(){
 		$('#bins-breaks').val(SETTINGS.bins_breaks_number);
-		$('#table-id').val(CONFIG.table_id);
+		$('#gdoc').val(CONFIG.table_id);
 		$('#column-name').val(CONFIG.column_name);
 		$('#binning').val(SETTINGS.binning).attr('selected', 'selected');
 		setBinsBreaksNumberLabel(SETTINGS.binning);
@@ -299,6 +315,18 @@
 		// $('#histagram-name').change(function(){
 		// 	CONFIG.histagram_name = $(this).val();
 		// });
+
+		$('.tab').click(function(){
+			if ( !$(this).hasClass('active') ){
+				$('.tab.active').removeClass('active');
+				$(this).addClass('active');
+
+				$('.data-source').hide();
+				var this_source = $(this).data('for');
+				$('#' + this_source).show();
+				SETTINGS.data_source = this_source;
+			};
+		});
 
 		$('#submit-btn').click(function(){
 			$.bbq.pushState({

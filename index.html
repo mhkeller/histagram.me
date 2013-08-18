@@ -15,21 +15,23 @@
 </head>
 <body>
 	<img src="imgs/logo.png" </img>
-	<h4>Put your data in a Google Spreadsheet, publish it to the web, paste the key, the column name of your data, and get a distribution.  <a href="http://github.com/mhkeller/histogrammer" target="_blank">More info.</a></h4>
+	<h4>Connect your data (paste the key from a Google spreadsheet or upload the file), set your data column's name, and get a distribution.  <a href="http://github.com/mhkeller/histagram.me" target="_blank">More info &amp; detailed how-to.</a></h4>
 
 	<div id="controls">
 		<div id="controls-table-key" class="control-block">
 			<div class="control-header">Table info</div>
-			<label for="table_id">Spreadsheet key:</label>
-			<input id="table-id" type="text" placeholder="..." name="table_id" /><br/>
+			<div id="spreadsheet-tab" class="tab active" data-for="gdoc">
+				Spreadsheet key
+			</div>
+			<div id="file-tab" class="tab" data-for="file">
+				File
+			</div>
+			<div class="clearfix"></div>
+			<input id="gdoc" type="text" placeholder="..." name="table_id" class="data-source" />
+			<input id="file" type="file" id="files" name="file" class="data-source" style="display:none;" />
 			<label for="column_name">Data column name:</label>
 			<input id="column-name" type="text" placeholder="..." name="column_name"/>
 		</div>
-<!-- 		<div id="break-controls" class="control-block">
-			<div class="control-header">Binning</div>
-			<div class="radio-option"><input type="radio" value="bins" name="binning" checked/> Bin number</div>
-			<div class="radio-option"><input type="radio" value="breaks" name="binning"/> Break distance</div>
-		</div> -->		
  		<div class="control-block" id="cluster-controls">
 			<div class="control-header">Binning</div>
 			<label for="binning">Type:</label>
