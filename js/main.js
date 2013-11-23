@@ -15,6 +15,63 @@
 		y_axis_label: 'Count',
 	};
 
+	var reader;
+
+
+  function fileErrorHandler(evt) {
+    switch(evt.target.error.code) {
+      case evt.target.error.NOT_FOUND_ERR:
+        alert('File Not Found!');
+        break;
+      case evt.target.error.NOT_READABLE_ERR:
+        alert('File is not readable');
+        break;
+      case evt.target.error.ABORT_ERR:
+        break; // noop
+      default:
+        alert('An error occurred reading this file.');
+    };
+  };
+
+  function updateProgress(evt) {
+    // evt is an ProgressEvent.
+    if (evt.lengthComputable) {
+      var percent_loaded = Math.round((evt.loaded / evt.total) * 100);
+      // Increase the progress bar length.
+      if (percent_loaded < 100) {
+        $("#file-tab").html(percent_loaded);
+      };
+    };
+  };
+
+  function handleFileSelect(evt) {
+    // Reset progress indicator on new file selection.
+    // resizePercentBar(0);
+
+    reader = new FileReader();
+    reader.onerror = fileErrorHandler;
+    reader.onprogress = updateProgress;
+    reader.onabort = function(e) {
+      alert('File read cancelled');
+    };
+    reader.onloadstart = function(e) {
+      // $progress_ctnr.addClass('loading');
+    };
+    reader.onload = function(e) {
+      var data = e.target.result;
+      var json = d3.csv.parse(data);
+      // Ensure that the progress bar displays 100% at the end.                                 
+      $("#file-tab").html('File');
+      fetchData(json);
+    };
+
+    // Read in the image file as a binary string.
+    reader.readAsBinaryString(evt.target.files[0]);
+      // console.log(x);
+  };
+
+  $('file').on('change', handleFileSelect, false);
+
 	function rounderToNPlaces(num, places) {
     var multiplier = Math.pow(10, places);
     return Math.round(num * multiplier) / multiplier;
@@ -245,7 +302,6 @@
 
 	function fetchData(file_reader_data){
 		var ds = defineDs(file_reader_data);
-
 		ds.fetch({
 		  success : function() {
 		  	var data = this.column(CONFIG.column_name).data;
@@ -346,17 +402,16 @@
 				SETTINGS.binning = state.binning;
 			};
 			updateFormEls();
-			loadData();
+			fetchData();
+			createHistogram(SETTINGS.data)
 		});
 	};
 
-	function loadData(){
-		if (SETTINGS.data == null){
-			fetchData();
-		}else{
-			createHistogram(SETTINGS.data)
-		};
-	};
+	// function loadData(){
+	// 	if (SETTINGS.data == null){
+	// 		fetchData();
+	// 	}
+	// };
 
 	function startTheShow(){
 		bindHandlers();
