@@ -2,17 +2,17 @@
 	// Reference for data
 	// https://docs.google.com/spreadsheet/ccc?key=0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE#gid=0
 	var SETTINGS = {
-		data: null,
-		binning: 'jenks',
-		bins_breaks_number: 15
-	};
-
-	var CONFIG = {
 		data_source: 'gdoc',
-		table_id: '0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE',
+		name: '0Aoev8mClJKw_dGZ4dElNYm1CTlV6endZT095NXJZWVE',
 		column_name: 'data',
+		binning: 'jenks',
+		bins_breaks_number: 15,
 		histagram_name: 'Histagram',
 		y_axis_label: 'Count',
+		data: {
+			gdoc: null,
+			file: null
+		},
 	};
 
 	var reader;
@@ -47,6 +47,9 @@
   function handleFileSelect(evt) {
     // Reset progress indicator on new file selection.
     // resizePercentBar(0);
+    var file_path = this.value.split('\\');
+    SETTINGS.name = file_path[file_path.length - 1];
+
     reader = new FileReader();
     reader.onerror = fileErrorHandler;
     reader.onprogress = updateProgress;
@@ -61,15 +64,14 @@
       var json = d3.csv.parse(data);
       // Ensure that the progress bar displays 100% at the end.                                 
       $("#file-tab").html('File');
-      fetchData(json);
+      SETTINGS.data.file = json;
+      
     };
 
     // Read in the image file as a binary string.
     reader.readAsBinaryString(evt.target.files[0]);
       // console.log(x);
   };
-
-  $('file').on('change', handleFileSelect, false);
 
 	function rounderToNPlaces(num, places) {
     var multiplier = Math.pow(10, places);
@@ -199,7 +201,7 @@
         marginBottom: 50
       },
       title: {
-        text: CONFIG.histagram_name,
+        text: SETTINGS.histagram_name,
         x: -18,
 		 		style: {
 					color: '#303030',
@@ -259,7 +261,7 @@
 			  enabled:false
       },
       series: [{
-        name: CONFIG.y_axis_label,
+        name: SETTINGS.y_axis_label,
         data: hist_data.data_buckets,
 			  color:'#6c0'
       }]
@@ -281,16 +283,16 @@
 	function defineDs(file_reader_data){
 		var ds_options = {}
 
-		if (CONFIG.data_source == 'gdoc'){
+		if (SETTINGS.data_source == 'gdoc'){
 			ds_options = {
 			  importer : Miso.Dataset.Importers.GoogleSpreadsheet,
 			  parser : Miso.Dataset.Parsers.GoogleSpreadsheet,
-			  key : CONFIG.table_id,
+			  key : SETTINGS.name,
 			  worksheet : "1"
 			};
-		}else{
+		}else if (SETTINGS.data_source == 'file'){
 			ds_options = {
-			  data: file_reader_data
+			  data: SETTINGS.data.file
 			};
 		};
 
@@ -299,12 +301,12 @@
 
 	};
 
-	function fetchData(file_reader_data){
-		var ds = defineDs(file_reader_data);
+	function fetchData(){
+		var ds = defineDs();
 		ds.fetch({
 		  success : function() {
-		  	var data = this.column(CONFIG.column_name).data;
-		  	createHistogram(data);
+		  	SETTINGS.data[SETTINGS.data_source] = (this.column(SETTINGS.column_name)) ? this.column(SETTINGS.column_name).data : SETTINGS.data[SETTINGS.data_source];
+		  	createHistogram(SETTINGS.data[SETTINGS.data_source]);
 		  },
 		  error : function() {
 		  	alert('Error retrieving file. Check your internet connection or try reuploading your file.');
@@ -323,9 +325,9 @@
 	};
 
 	function setBinsBreaksNumberLabel(val){
-		var $label = $('#bins_breaks_number_label'),
-				$field = $('#bins-breaks'),
-				numb_val    = $field.data('val');
+		var $label   = $('#bins_breaks_number_label'),
+				$field   = $('#bins-breaks'),
+				numb_val = $field.data('val');
 
 		$field.val(numb_val);
 		$field.removeAttr('disabled');
@@ -342,20 +344,22 @@
 		}
 	};
 
-	function updateFormEls(){
+	function updateFormInputsFromSettings(){
 		$('#bins-breaks').val(SETTINGS.bins_breaks_number);
-		$('#gdoc').val(CONFIG.table_id);
-		$('#column-name').val(CONFIG.column_name);
+		$('#gdoc').val(SETTINGS.name);
+		$('#column-name').val(SETTINGS.column_name);
 		$('#binning').val(SETTINGS.binning).attr('selected', 'selected');
 		setBinsBreaksNumberLabel(SETTINGS.binning);
 	};
 
 	function bindHandlers(){
+    document.getElementById('file').addEventListener('change', handleFileSelect, false);
+
 		$('#table-id').keyup(function(){
-			CONFIG.table_id = $(this).val();
+			SETTINGS.name = $(this).val();
 		});
 		$('#column-name').keyup(function(){
-			CONFIG.column_name = $(this).val();
+			SETTINGS.column_name = $(this).val();
 		});
 		$('#bins-breaks').keyup(function(){
 			var val = $(this).val();
@@ -368,7 +372,7 @@
 			setBinsBreaksNumberLabel(val);
 		});
 		// $('#histagram-name').change(function(){
-		// 	CONFIG.histagram_name = $(this).val();
+		// 	SETTINGS.histagram_name = $(this).val();
 		// });
 
 		$('.tab').click(function(){
@@ -383,25 +387,33 @@
 			};
 		});
 
+		// TODO change to form submit
 		$('#submit-btn').click(function(){
 			$.bbq.pushState({
-				'key': CONFIG.table_id,
-				'col': CONFIG.column_name,
+				'source': SETTINGS.data_source,
+				'name': SETTINGS.name,
+				'col': SETTINGS.column_name,
 				'bbn': SETTINGS.bins_breaks_number,
-				'binning': SETTINGS.binning
+				'binning': SETTINGS.binning			
 			});
 		});
 		
 		$(window).bind( 'hashchange', function(e) {
 			if (window.location.hash != ''){
 				var state = $.bbq.getState()
-				CONFIG.table_id = state.key;
-				CONFIG.column_name = state.col;
+				SETTINGS.name = state.name;
+				SETTINGS.column_name = state.col;
 				SETTINGS.bins_breaks_number = state.bbn;
 				SETTINGS.binning = state.binning;
+				SETTINGS.data_source = state.source;
 			};
-			updateFormEls();
-			fetchData();
+			updateFormInputsFromSettings();
+			if (SETTINGS.data_source != 'file' || SETTINGS.data.file != null) {
+				fetchData();
+			}else{
+				$('#file-tab').trigger('click');
+				alert('It looks like you want to load a histogram of the local file "' + SETTINGS.name + '". Click \'Choose File\' below to select which one. Your data will be read into the browser but it won\'t be saved or sent to any server.')
+			}
 		});
 	};
 
