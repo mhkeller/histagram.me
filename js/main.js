@@ -268,6 +268,7 @@
 	};
 
 	function drawDescriptStats(data){
+		console.log(data)
 		var mean   = ss.mean(data),
 			  median = ss.median(data),
 			  mode   = String(stats.mode(data).join(', ')),
@@ -403,7 +404,6 @@
 			};
 			updateFormEls();
 			fetchData();
-			createHistogram(SETTINGS.data)
 		});
 	};
 
