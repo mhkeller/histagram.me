@@ -355,13 +355,14 @@
 	function bindHandlers(){
     document.getElementById('file').addEventListener('change', handleFileSelect, false);
 
-		$('#table-id').keyup(function(){
+		$('#gdoc').change(function(){
 			SETTINGS.name = $(this).val();
+			console.log(SETTINGS.name);
 		});
-		$('#column-name').keyup(function(){
+		$('#column-name').change(function(){
 			SETTINGS.column_name = $(this).val();
 		});
-		$('#bins-breaks').keyup(function(){
+		$('#bins-breaks').change(function(){
 			var val = $(this).val();
 			$(this).data('val', val);
 			SETTINGS.bins_breaks_number = val;
