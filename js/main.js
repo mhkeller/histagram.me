@@ -47,7 +47,6 @@
   function handleFileSelect(evt) {
     // Reset progress indicator on new file selection.
     // resizePercentBar(0);
-
     reader = new FileReader();
     reader.onerror = fileErrorHandler;
     reader.onprogress = updateProgress;
@@ -268,7 +267,6 @@
 	};
 
 	function drawDescriptStats(data){
-		console.log(data)
 		var mean   = ss.mean(data),
 			  median = ss.median(data),
 			  mode   = String(stats.mode(data).join(', ')),
@@ -406,12 +404,6 @@
 			fetchData();
 		});
 	};
-
-	// function loadData(){
-	// 	if (SETTINGS.data == null){
-	// 		fetchData();
-	// 	}
-	// };
 
 	function startTheShow(){
 		bindHandlers();
