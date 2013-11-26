@@ -363,8 +363,10 @@
     document.getElementById('file').addEventListener('change', handleFileSelect, false);
 
 		$('#gdoc').change(function(){
-			SETTINGS.name = $(this).val();
-			fetchData();
+			if ($(this).val() != ''){
+				SETTINGS.name = $(this).val();
+				fetchData();
+			}
 		});
 		$('#column-name').change(function(){
 			SETTINGS.column_name = $(this).val();
