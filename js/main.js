@@ -65,7 +65,7 @@
       // Ensure that the progress bar displays 100% at the end.                                 
       $("#file-tab").html('File');
       SETTINGS.data.file = json;
-      
+      fetchData();
     };
 
     // Read in the image file as a binary string.
@@ -301,20 +301,23 @@
 
 	};
 
-	function fetchData(){
+	function fetchData(create){
 		var ds = defineDs();
 		ds.fetch({
 		  success : function() {
 		  	SETTINGS.data[SETTINGS.data_source] = (this.column(SETTINGS.column_name)) ? this.column(SETTINGS.column_name).data : SETTINGS.data[SETTINGS.data_source];
-		  	createHistogram(SETTINGS.data[SETTINGS.data_source]);
+		  	if (create){
+		  		createHistogram();
+		  	}
 		  },
 		  error : function() {
-		  	alert('Error retrieving file. Check your internet connection or try reuploading your file.');
+		  	alert('Error retrieving file. Check your Google Spreadsheet key or try reuploading your file.');
 		  }
 		});
 	};
 
-	function createHistogram(data){
+	function createHistogram(){
+		var data = SETTINGS.data[SETTINGS.data_source];
 		try{
 	  	constructHistDataDrawChart(data);
 	  	drawDescriptStats(data);
@@ -346,7 +349,11 @@
 
 	function updateFormInputsFromSettings(){
 		$('#bins-breaks').val(SETTINGS.bins_breaks_number);
-		$('#gdoc').val(SETTINGS.name);
+		if (SETTINGS.data_source == 'gdoc'){
+			$('#gdoc').val(SETTINGS.name);
+		}else{
+			$("#file-tab").trigger('click');
+		}
 		$('#column-name').val(SETTINGS.column_name);
 		$('#binning').val(SETTINGS.binning).attr('selected', 'selected');
 		setBinsBreaksNumberLabel(SETTINGS.binning);
@@ -357,7 +364,7 @@
 
 		$('#gdoc').change(function(){
 			SETTINGS.name = $(this).val();
-			console.log(SETTINGS.name);
+			fetchData();
 		});
 		$('#column-name').change(function(){
 			SETTINGS.column_name = $(this).val();
@@ -385,6 +392,10 @@
 				var this_source = $(this).data('for');
 				$('#' + this_source).show();
 				SETTINGS.data_source = this_source;
+
+				if (this_source == 'gdoc'){
+					SETTINGS.name = $('#gdoc').val();
+				}
 			};
 		});
 
@@ -410,9 +421,8 @@
 			};
 			updateFormInputsFromSettings();
 			if (SETTINGS.data_source != 'file' || SETTINGS.data.file != null) {
-				fetchData();
+				fetchData(true);
 			}else{
-				$('#file-tab').trigger('click');
 				alert('It looks like you want to load a histogram of the local file "' + SETTINGS.name + '". Click \'Choose File\' below to select which one. Your data will be read into the browser but it won\'t be saved or sent to any server.')
 			}
 		});
