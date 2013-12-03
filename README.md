@@ -16,6 +16,13 @@
   <li> <code>Custom breaks</code> takes a list of comma-separated threshold values to define custom break points. Start with the minimum value in your data and ending with the maximum value such as <code>1, 10, 24, 66, 99</code> with <code>1</code> and <code>99</code> the min and max, respectively. These are parsed with <code>parseInt</code> so you can include a space for readability.</li>
   <li> <code>Custom interval</code> will make a bin every n units along your data. If you put in a super high number then this might be slow to draw.</li>
 </ul>
+
+#### Running it locally
+
+* Clone the repo with `git clone https://github.com/mhkeller/histagram.me.git`
+* Run `python -m SimpleHTTPServer 8000`
+* Go to `http://0.0.0.0:8000` in your browser.
+
 <h4>Contact</h4>
 <p><strong>By:</strong> <a href="http://www.twitter.com/mhkeller" target="_blank">@mhkeller</a></p>
 <p>Logo + domain support by <a href="http://github.com/abelsonlive" target="_blank">Brian Abelson</a></p>
