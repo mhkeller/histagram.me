@@ -70,7 +70,6 @@
 
     // Read in the image file as a binary string.
     reader.readAsBinaryString(evt.target.files[0]);
-      // console.log(x);
   };
 
 	function rounderToNPlaces(num, places) {
@@ -176,7 +175,11 @@
 	            mode = [ary[i]];
 	        };
 	    };
-	    return mode;
+	    if (max > 1){
+		    return mode;
+	    }else{
+	    	return 'No mode'
+	    }
 		},
 		headTail: function(arr, data_min, data_max){
 			var mean = ss.mean(arr),
@@ -271,7 +274,7 @@
 	function drawDescriptStats(data){
 		var mean   = ss.mean(data),
 			  median = ss.median(data),
-			  mode   = String(stats.mode(data).join(', ')),
+			  mode   = String( ((typeof stats.mode(data) == 'object') ? stats.mode(data).join(', ') : stats.mode(data) ) ),
 			  range  = d3.min(data) + '-' + d3.max(data);
 
 		$('#mean span').html(Math.round(mean * 100) / 100);
@@ -403,13 +406,18 @@
 
 		// TODO change to form submit
 		$('#submit-btn').click(function(){
-			$.bbq.pushState({
+			var opts = {
 				'source': SETTINGS.data_source,
 				'name': SETTINGS.name,
 				'col': SETTINGS.column_name,
 				'bbn': SETTINGS.bins_breaks_number,
 				'binning': SETTINGS.binning			
-			});
+			}
+			if (!_.isEqual(opts,$.bbq.getState())){
+				$.bbq.pushState(opts);
+			}else{
+				$(window).trigger( 'hashchange' );
+			}
 		});
 		
 		$(window).bind( 'hashchange', function(e) {
