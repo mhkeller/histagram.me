@@ -20,7 +20,8 @@
 #### Running it locally
 
 * Clone the repo with `git clone https://github.com/mhkeller/histagram.me.git`
-* Run `python -m SimpleHTTPServer 8000`
+* `cd histagram.me` 
+* Then `python -m SimpleHTTPServer 8000`
 * Go to `http://0.0.0.0:8000` in your browser.
 
 <h4>Contact</h4>
