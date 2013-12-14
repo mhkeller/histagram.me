@@ -12,7 +12,7 @@
 		data: {
 			gdoc: null,
 			file: null
-		},
+		}
 	};
 
 	var reader;
